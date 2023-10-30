@@ -10,5 +10,5 @@ To build the code, run `make all` or just `make`. To flash the board over a
 debugger, run `make flash`.
 
 The HAL makes all of its modules available in `stm32g4xx_hal.h`. To enable or
-disable modules, comment out the relevant lines in `src/stm32g4xx_hal.h`. You
+disable modules, comment out the relevant lines in `src/stm32g4xx_hal_config.h`. You
 will have to do this to fit the code into flash.
