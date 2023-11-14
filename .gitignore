@@ -1,3 +1,4 @@
+.directoryhash
 build/
 *.o
 *.elf
