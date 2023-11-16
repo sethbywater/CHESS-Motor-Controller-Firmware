@@ -7,48 +7,42 @@
 
 #define LED_PIN 5
 
-TIM_HandleTypeDef motor;
-TIM_HandleTypeDef encoder;
-TIM_HandleTypeDef aux_encoder;
+TIM_HandleTypeDef motor_timer;
+TIM_HandleTypeDef encoder_timer;
+TIM_HandleTypeDef aux_encoder_timer;
+SPI_HandleTypeDef aux_encoder_spi;
 
 void main(void)
 {
 	HAL_Init();
 
 	system_clock_config();
-	// do two dummy reads after enabling the peripheral clock, as per the errata
-	volatile uint32_t dummy;
-	dummy = RCC->AHB1ENR;
-	dummy = RCC->AHB1ENR;
-
-	// motor->CR1 |=
-	// CENTER;
-
-	// GPIOA->MODER |= (1 << GPIO_MODER_MODER5_Pos);
-
-	// while (1)
-	// {
-	// 	GPIOA->ODR ^= (1 << LED_PIN);
-	// 	for (uint32_t i = 0; i < 1000000; i++)
-	// 		;
-	// }
 }
 
 void system_clock_config(void)
 {
+	// do two dummy reads after enabling the peripheral clock, as per the errata
+	volatile uint32_t dummy;
+	dummy = RCC->AHB1ENR;
+	dummy = RCC->AHB1ENR;
 }
 
 void motor_timer_setup(void)
 {
-	motor.Instance = TIM20;
+	motor_timer.Instance = TIM20;
 }
 
 void encoder_timer_setup(void)
 {
-	encoder.Instance = TIM5;
+	encoder_timer.Instance = TIM5;
 }
 
 void aux_encoder_timer_setup(void)
 {
 	// aux_encoder.Instance =
+}
+
+void aux_encoder_spi_setup(void)
+{
+	aux_encoder_spi.Instance = SPI4;
 }
