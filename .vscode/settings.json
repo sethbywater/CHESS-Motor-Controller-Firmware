@@ -1,0 +1,10 @@
+{
+	"C_Cpp.default.includePath": [
+		"${workspaceFolder}/STM32CubeG4/Drivers/CMSIS/Include/",
+		"${workspaceFolder}/STM32CubeG4/Drivers/CMSIS/Core/Include/",
+		"${workspaceFolder}/STM32CubeG4/Drivers/CMSIS/Device/ST/STM32G4xx/Include/",
+		"${workspaceFolder}/STM32CubeG4/Drivers/STM32G4xx_HAL_Driver/Inc/",
+		"${workspaceFolder}/src"
+	],
+	"C_Cpp.default.compilerPath": "arm-none-eabi-gcc"
+}
