@@ -4,21 +4,18 @@
 
 #define ADC_RES_10_BITS ADC_CFGR_RES_1
 
-#define OPAMP_FOLLOWER_MODE (OPAMP_CSR_VMSEL_0 | OPAMP_CSR_VMSEL_1)
-#define OPAMP_ENABLE OPAMP_CSR_OPAMPxEN
-
-ADC_TypeDef *ph1_current_adc, *ph2_current_adc, *ph3_current_adc, *ph4_current_adc, *temp_adc;
-OPAMP_TypeDef *ph1_current_opamp, *ph2_current_opamp, *ph3_current_opamp, *ph4_current_opamp;
+ADC_HandleTypeDef ph1_current_adc, ph2_current_adc, ph3_current_adc, ph4_current_adc, temp_adc;
+OPAMP_HandleTypeDef ph1_current_opamp, ph2_current_opamp, ph3_current_opamp, ph4_current_opamp;
 
 void adc_setup(void)
 {
-	ph1_current_adc = ADC2;
-	ph2_current_adc = ADC4;
-	ph3_current_adc = ADC5;
-	ph4_current_adc = ADC3;
-	temp_adc = ADC5;
+	ph1_current_adc.Instance = ADC2;
+	ph2_current_adc.Instance = ADC4;
+	ph3_current_adc.Instance = ADC5;
+	ph4_current_adc.Instance = ADC3;
+	temp_adc.Instance = ADC5;
 
-	ph1_current_adc->CFGR |= ADC_RES_10_BITS;
+	ph1_current_adc.Init.Resolution = ADC_RES_10_BITS;
 
 	// From the STM32 manual regarding the temperature sensor:
 	// To use the sensor :
@@ -32,23 +29,35 @@ void adc_setup(void)
 
 void opamp_setup(void)
 {
-	ph1_current_opamp = OPAMP2;
-	ph2_current_opamp = OPAMP6;
-	ph3_current_opamp = OPAMP4;
-	ph4_current_opamp = OPAMP3;
+	ph1_current_opamp.Instance = OPAMP2;
+	ph2_current_opamp.Instance = OPAMP6;
+	ph3_current_opamp.Instance = OPAMP4;
+	ph4_current_opamp.Instance = OPAMP3;
 
-	ph1_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO3 | OPAMP_ENABLE;
-	ph1_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO1 | OPAMP_ENABLE;
-	ph1_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO2 | OPAMP_ENABLE;
-	ph1_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO1 | OPAMP_ENABLE;
+	// ph1_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO3 | OPAMP_ENABLE;
+	// ph2_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO1 | OPAMP_ENABLE;
+	// ph3_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO2 | OPAMP_ENABLE;
+	// ph4_current_opamp->CSR |= OPAMP_FOLLOWER_MODE | OPAMP_NONINVERTINGINPUT_IO1 | OPAMP_ENABLE;
+
+	ph1_current_opamp.Init.PowerMode = OPAMP_POWERMODE_NORMALSPEED;
+	ph1_current_opamp.Init.Mode = OPAMP_FOLLOWER_MODE;
+	ph1_current_opamp.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO3;
+	ph1_current_opamp.Init.InternalOutput = ENABLE;
+	ph1_current_opamp.Init.TimerControlledMuxmode = ;
+	ph1_current_opamp.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_NO;
+	ph1_current_opamp.Init.PgaGain = OPAMP_PGA_GAIN_2_OR_MINUS_1;
+	ph1_current_opamp.Init.UserTrimming = OPAMP_TRIMMING_FACTORY;
+
+	if (HAL_OPAMP_Init(&ph1_current_opamp) + HAL_OPAMP_Init(&ph2_current_opamp) + HAL_OPAMP_Init(&ph3_current_opamp) + HAL_OPAMP_Init(&ph4_current_opamp) != HAL_OK)
+		error_handler();
 }
 
 void get_phase_currents(uint32_t *a, uint32_t *b, uint32_t *c, uint32_t *d)
 {
-	*a = ph1_current_adc->DR;
-	*b = ph2_current_adc->DR;
-	*c = ph3_current_adc->DR;
-	*d = ph3_current_adc->DR;
+	*a = ph1_current_adc.Instance->DR;
+	*b = ph2_current_adc.Instance->DR;
+	*c = ph3_current_adc.Instance->DR;
+	*d = ph3_current_adc.Instance->DR;
 }
 
 float temperature()
